@@ -867,6 +867,56 @@ const Bookings = () => {
                   </div>
                 </div>
               </div>
+              {/* Driver Details Grid */}
+              <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm mt-8">
+                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <User size={16} /> Driver Details (Admin Only)
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-gray-400 uppercase">Driver Name</p>
+                    {isEditing ? (
+                      <input 
+                        type="text"
+                        className="w-full bg-gray-50 border-gray-200 rounded-lg py-1 px-2 text-sm font-bold outline-none"
+                        value={editData.driverName || ''}
+                        onChange={(e) => handleEditChange('driverName', e.target.value)}
+                        placeholder="Enter driver name"
+                      />
+                    ) : (
+                      <p className="text-sm font-bold text-gray-900">{selectedBooking.driverName || 'Not Assigned'}</p>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-gray-400 uppercase">Driver Number</p>
+                    {isEditing ? (
+                      <input 
+                        type="text"
+                        className="w-full bg-gray-50 border-gray-200 rounded-lg py-1 px-2 text-sm font-bold outline-none"
+                        value={editData.driverNumber || ''}
+                        onChange={(e) => handleEditChange('driverNumber', e.target.value)}
+                        placeholder="Enter driver number"
+                      />
+                    ) : (
+                      <p className="text-sm font-bold text-gray-900">{selectedBooking.driverNumber || 'Not Assigned'}</p>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-gray-400 uppercase">Car No</p>
+                    {isEditing ? (
+                      <input 
+                        type="text"
+                        className="w-full bg-gray-50 border-gray-200 rounded-lg py-1 px-2 text-sm font-bold outline-none"
+                        value={editData.carNo || ''}
+                        onChange={(e) => handleEditChange('carNo', e.target.value)}
+                        placeholder="Enter car number"
+                      />
+                    ) : (
+                      <p className="text-sm font-bold text-gray-900">{selectedBooking.carNo || 'Not Assigned'}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Modal Footer */}

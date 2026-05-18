@@ -70,7 +70,12 @@ const CreateBooking = () => {
     extraHour: '',
     waitingCharges: '',
     nightAllowance: '',
-    tollTax: 'Excluded'
+    tollTax: 'Excluded',
+
+    // Section 7: Driver Details
+    driverName: '',
+    driverNumber: '',
+    carNo: ''
   });
 
   const handleChange = (field, value) => {
@@ -530,6 +535,43 @@ const CreateBooking = () => {
                   className="w-full bg-gray-50/50 border-gray-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-purple-100 outline-none transition-all"
                   value={formData.nightAllowance}
                   onChange={(e) => handleChange('nightAllowance', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* SECTION 6: DRIVER DETAILS (Admin Only) */}
+          <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6 lg:col-span-2 hover:shadow-md transition-shadow">
+            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="p-2 bg-slate-50 rounded-lg text-slate-500"><User size={22} /></div>
+              Driver Details (Admin Only)
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Driver Name</label>
+                <input 
+                  type="text" placeholder="Driver Name"
+                  className="w-full bg-gray-50/50 border-gray-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-slate-100 outline-none transition-all"
+                  value={formData.driverName}
+                  onChange={(e) => handleChange('driverName', e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Driver Number</label>
+                <input 
+                  type="text" placeholder="Driver Number"
+                  className="w-full bg-gray-50/50 border-gray-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-slate-100 outline-none transition-all"
+                  value={formData.driverNumber}
+                  onChange={(e) => handleChange('driverNumber', e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Car No</label>
+                <input 
+                  type="text" placeholder="Car No"
+                  className="w-full bg-gray-50/50 border-gray-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-slate-100 outline-none transition-all"
+                  value={formData.carNo}
+                  onChange={(e) => handleChange('carNo', e.target.value)}
                 />
               </div>
             </div>
