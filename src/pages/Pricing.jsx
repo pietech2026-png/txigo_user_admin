@@ -14,19 +14,21 @@ const Pricing = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRule, setEditingRule] = useState(null);
   const [formData, setFormData] = useState({
-    rideType: 'Oneway',
+    tripType: 'Oneway',
     category: '',
     sourceCity: '',
     destinationCity: '',
     state: '',
     city: '',
     baseFare: 0,
-    perKmRate: 0,
-    fixedFare: 0,
-    minKmsPerDay: 250,
-    driverAllowance: 250,
-    nightAllowance: 250,
-    packages: []
+    includedKm: 300,
+    extraKmRate: 30,
+    perDayFare: 0,
+    pickupTime: '10:00 AM',
+    returnTimeLimit: '11:00 PM',
+    nightCharge: 500,
+    taxesIncluded: false,
+    status: 'Active'
   });
 
   useEffect(() => {
@@ -114,19 +116,21 @@ const Pricing = () => {
   const openAddModal = () => {
     setEditingRule(null);
     setFormData({
-      rideType: 'Oneway',
+      tripType: 'Oneway',
       category: categories[0]?.name || '',
       sourceCity: '',
       destinationCity: '',
       state: '',
       city: '',
       baseFare: 0,
-      perKmRate: 0,
-      fixedFare: 0,
-      minKmsPerDay: 250,
-      driverAllowance: 250,
-      nightAllowance: 250,
-      packages: []
+      includedKm: 300,
+      extraKmRate: 30,
+      perDayFare: 0,
+      pickupTime: '10:00 AM',
+      returnTimeLimit: '11:00 PM',
+      nightCharge: 500,
+      taxesIncluded: false,
+      status: 'Active'
     });
     setIsModalOpen(true);
   };
@@ -147,8 +151,8 @@ const Pricing = () => {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Pricing Management</h1>
-          <p className="text-sm text-gray-500 font-medium">Configure route-wise, distance-based, and rental pricing.</p>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Pricing Management (Traveller Mode)</h1>
+          <p className="text-sm text-gray-500 font-medium">Configure rules for Travellers based on City/State.</p>
         </div>
         <button 
           onClick={openAddModal}
@@ -158,136 +162,15 @@ const Pricing = () => {
         </button>
       </div>
 
-      {/* Default Category Pricing */}
-      <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-            <Car size={20} />
-          </div>
-          <div>
-            <h3 className="font-bold text-gray-900">Default Category Rates</h3>
-            <p className="text-xs text-gray-500">Update standard base and per-km rates for each vehicle type.</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {categories.map((cat) => (
-            <div key={cat._id} className="p-4 bg-gray-50/50 rounded-xl border border-gray-100 flex flex-col gap-3">
-              <span className="text-sm font-bold text-gray-900">{cat.displayName}</span>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="relative">
-                  <input 
-                    type="number"
-                    defaultValue={cat.baseFare}
-                    onBlur={async (e) => {
-                      const newValue = parseFloat(e.target.value);
-                      if (newValue === cat.baseFare) return;
-                      try {
-                        const res = await fetch(`${API_BASE_URL}/car-categories/${cat._id}`, {
-                          method: 'PUT',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ baseFare: newValue })
-                        });
-                        if (!res.ok) throw new Error('Failed');
-                        fetchData();
-                      } catch (err) { alert(err.message); }
-                    }}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none focus:ring-2 focus:ring-primary-100"
-                  />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[8px] font-bold text-gray-400">Base</span>
-                </div>
-                <div className="relative">
-                  <input 
-                    type="number"
-                    defaultValue={cat.perKmRate}
-                    onBlur={async (e) => {
-                      const newValue = parseFloat(e.target.value);
-                      if (newValue === cat.perKmRate) return;
-                      try {
-                        const res = await fetch(`${API_BASE_URL}/car-categories/${cat._id}`, {
-                          method: 'PUT',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ perKmRate: newValue })
-                        });
-                        if (!res.ok) throw new Error('Failed');
-                        fetchData();
-                      } catch (err) { alert(err.message); }
-                    }}
-                    className="w-full bg-white border border-gray-200 rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none focus:ring-2 focus:ring-primary-100"
-                  />
-                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[8px] font-bold text-gray-400">/km</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Global Settings */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
-              <Zap size={20} />
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-900">Global Pricing Multiplier</h3>
-              <p className="text-xs text-gray-500">Apply factor to all car pricing</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <input 
-              type="number" step="0.1"
-              value={globalMultiplier}
-              onChange={(e) => setGlobalMultiplier(e.target.value)}
-              className="w-32 bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-gray-900 focus:ring-2 focus:ring-orange-100 outline-none transition-all"
-            />
-            <button 
-              onClick={() => updateGlobalSetting('globalMultiplier', parseFloat(globalMultiplier))}
-              className="flex items-center gap-2 px-6 py-2.5 bg-orange-600 text-white rounded-xl font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-100"
-            >
-              <Save size={18} /> Update
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600">
-              <Globe size={20} />
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-900">Global Advance Payment</h3>
-              <p className="text-xs text-gray-500">Default advance percentage for bookings</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <input 
-                type="number"
-                value={advancePercentage}
-                onChange={(e) => setAdvancePercentage(e.target.value)}
-                className="w-32 bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-gray-900 focus:ring-2 focus:ring-primary-100 outline-none transition-all pr-8"
-              />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-gray-400">%</span>
-            </div>
-            <button 
-              onClick={() => updateGlobalSetting('advancePercentage', parseInt(advancePercentage))}
-              className="flex items-center gap-2 px-6 py-2.5 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 transition-all shadow-lg shadow-primary-100"
-            >
-              <Save size={18} /> Set
-            </button>
-          </div>
-        </div>
-      </div>
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-gray-50/50">
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type / Route</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Category</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Type / Location</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Vehicle</th>
                 <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Pricing</th>
-                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Details</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Limits</th>
                 <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
@@ -297,18 +180,15 @@ const Pricing = () => {
                   <tr key={rule._id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className={`w-fit px-1.5 py-0.5 rounded text-[8px] font-black uppercase mb-1 ${
-                          rule.rideType === 'Oneway' ? 'bg-blue-50 text-blue-600' : 
-                          rule.rideType === 'Roundtrip' ? 'bg-purple-50 text-purple-600' : 'bg-orange-50 text-orange-600'
-                        }`}>
-                          {rule.rideType}
+                        <span className={`w-fit px-1.5 py-0.5 rounded text-[8px] font-black uppercase mb-1 bg-blue-50 text-blue-600`}>
+                          {rule.tripType || rule.rideType}
                         </span>
-                        {rule.sourceCity && rule.destinationCity ? (
-                          <span className="text-sm font-bold text-gray-900">{rule.sourceCity} → {rule.destinationCity}</span>
-                        ) : rule.city ? (
-                          <span className="text-sm font-bold text-gray-900">{rule.city} ({rule.state})</span>
+                        {rule.city ? (
+                          <span className="text-sm font-bold text-gray-900">{rule.city}</span>
+                        ) : rule.state ? (
+                          <span className="text-sm font-bold text-gray-900">{rule.state} (State)</span>
                         ) : (
-                          <span className="text-sm font-bold text-gray-900">{rule.state} (State-wide)</span>
+                          <span className="text-sm font-bold text-gray-900">Default (All)</span>
                         )}
                       </div>
                     </td>
@@ -316,26 +196,18 @@ const Pricing = () => {
                       <span className="text-sm font-medium text-gray-700">{rule.category}</span>
                     </td>
                     <td className="px-6 py-4">
-                      {rule.fixedFare > 0 ? (
-                        <span className="text-sm font-bold text-gray-900">₹{rule.fixedFare} (Fixed)</span>
-                      ) : (
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-gray-900">₹{rule.perKmRate}/km</span>
-                          <span className="text-[10px] text-gray-500">Base: ₹{rule.baseFare}</span>
-                        </div>
-                      )}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-gray-900">Base: ₹{rule.baseFare}</span>
+                        <span className="text-[10px] text-gray-500">Extra: ₹{rule.extraKmRate || rule.perKmRate}/km</span>
+                        {rule.tripType === 'Multi-Day Roundtrip' && <span className="text-[10px] text-gray-500">Day: ₹{rule.perDayFare}</span>}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
-                      {rule.rideType === 'Roundtrip' ? (
-                        <div className="text-[10px] space-y-0.5 font-medium text-gray-500">
-                          <div>Min Kms: {rule.minKmsPerDay}/day</div>
-                          <div>Driver: ₹{rule.driverAllowance}</div>
-                        </div>
-                      ) : rule.rideType === 'Local' ? (
-                        <span className="text-[10px] text-gray-500 font-medium">{rule.packages?.length} Packages</span>
-                      ) : (
-                        <span className="text-[10px] text-gray-400">N/A</span>
-                      )}
+                      <div className="text-[10px] space-y-0.5 font-medium text-gray-500">
+                        <div>Incl KM: {rule.includedKm}</div>
+                        <div>Return limit: {rule.returnTimeLimit}</div>
+                        <div>Night Charge: ₹{rule.nightCharge}</div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -377,20 +249,19 @@ const Pricing = () => {
             <form onSubmit={handleSaveRule} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
               <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-xs font-black text-gray-500 uppercase mb-2">Ride Type</label>
+                  <label className="block text-xs font-black text-gray-500 uppercase mb-2">Trip Type</label>
                   <select 
-                    value={formData.rideType}
-                    onChange={(e) => setFormData({...formData, rideType: e.target.value})}
+                    value={formData.tripType}
+                    onChange={(e) => setFormData({...formData, tripType: e.target.value})}
                     className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-900 outline-none focus:ring-2 focus:ring-primary-100"
                   >
                     <option value="Oneway">Oneway</option>
-                    <option value="Roundtrip">Roundtrip</option>
-                    <option value="Local">Local Rental</option>
-                    <option value="Airport">Airport</option>
+                    <option value="Roundtrip Same Day">Roundtrip Same Day</option>
+                    <option value="Multi-Day Roundtrip">Multi-Day Roundtrip</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-black text-gray-500 uppercase mb-2">Car Category</label>
+                  <label className="block text-xs font-black text-gray-500 uppercase mb-2">Vehicle Type</label>
                   <select 
                     value={formData.category}
                     onChange={(e) => setFormData({...formData, category: e.target.value})}
@@ -403,112 +274,28 @@ const Pricing = () => {
                 </div>
               </div>
 
-              {/* Route Specific Fields */}
-              {(formData.rideType === 'Oneway' || formData.rideType === 'Roundtrip') && (
-                <div className="space-y-4 p-4 bg-blue-50/30 rounded-2xl border border-blue-50">
-                  <div className="flex items-center gap-2 text-blue-600 mb-2">
-                    <Info size={14} />
-                    <span className="text-[10px] font-black uppercase tracking-wider">Route Info (Leave cities empty for general state/city rules)</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <input 
-                      placeholder="Source City"
-                      value={formData.sourceCity}
-                      onChange={(e) => setFormData({...formData, sourceCity: e.target.value})}
-                      className="bg-white border-gray-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
-                    />
-                    <input 
-                      placeholder="Destination City"
-                      value={formData.destinationCity}
-                      onChange={(e) => setFormData({...formData, destinationCity: e.target.value})}
-                      className="bg-white border-gray-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <input 
-                      placeholder="State Override"
-                      value={formData.state}
-                      onChange={(e) => setFormData({...formData, state: e.target.value})}
-                      className="bg-white border-gray-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
-                    />
-                    <input 
-                      placeholder="City Override"
-                      value={formData.city}
-                      onChange={(e) => setFormData({...formData, city: e.target.value})}
-                      className="bg-white border-gray-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
-                    />
-                  </div>
+              <div className="space-y-4 p-4 bg-blue-50/30 rounded-2xl border border-blue-50">
+                <div className="flex items-center gap-2 text-blue-600 mb-2">
+                  <Info size={14} />
+                  <span className="text-[10px] font-black uppercase tracking-wider">Location Overrides</span>
                 </div>
-              )}
-
-              {formData.rideType === 'Local' && (
-                <div className="space-y-4 p-4 bg-orange-50/30 rounded-2xl border border-orange-50">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-black text-orange-600 uppercase tracking-wider">Rental Packages</span>
-                    <button 
-                      type="button"
-                      onClick={() => setFormData({...formData, packages: [...formData.packages, { hours: 8, kms: 80, price: 0 }]})}
-                      className="text-[10px] font-bold text-orange-600 bg-white px-2 py-1 rounded-lg border border-orange-100 hover:bg-orange-100"
-                    >
-                      + Add Package
-                    </button>
-                  </div>
-                  {formData.packages.map((pkg, idx) => (
-                    <div key={idx} className="grid grid-cols-4 gap-2">
-                      <input 
-                        type="number" placeholder="Hrs"
-                        value={pkg.hours}
-                        onChange={(e) => {
-                          const newPkgs = [...formData.packages];
-                          newPkgs[idx].hours = e.target.value;
-                          setFormData({...formData, packages: newPkgs});
-                        }}
-                        className="bg-white border-gray-100 rounded-lg px-2 py-1.5 text-xs font-bold outline-none"
-                      />
-                      <input 
-                        type="number" placeholder="Kms"
-                        value={pkg.kms}
-                        onChange={(e) => {
-                          const newPkgs = [...formData.packages];
-                          newPkgs[idx].kms = e.target.value;
-                          setFormData({...formData, packages: newPkgs});
-                        }}
-                        className="bg-white border-gray-100 rounded-lg px-2 py-1.5 text-xs font-bold outline-none"
-                      />
-                      <input 
-                        type="number" placeholder="Price"
-                        value={pkg.price}
-                        onChange={(e) => {
-                          const newPkgs = [...formData.packages];
-                          newPkgs[idx].price = e.target.value;
-                          setFormData({...formData, packages: newPkgs});
-                        }}
-                        className="bg-white border-gray-100 rounded-lg px-2 py-1.5 text-xs font-bold outline-none"
-                      />
-                      <button 
-                        type="button"
-                        onClick={() => {
-                          const newPkgs = formData.packages.filter((_, i) => i !== idx);
-                          setFormData({...formData, packages: newPkgs});
-                        }}
-                        className="text-red-400 hover:text-red-600 flex items-center justify-center"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Fixed Fare</label>
+                <div className="grid grid-cols-2 gap-4">
                   <input 
-                    type="number" value={formData.fixedFare}
-                    onChange={(e) => setFormData({...formData, fixedFare: e.target.value})}
-                    className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
+                    placeholder="State Override (Leave empty for Default)"
+                    value={formData.state || ''}
+                    onChange={(e) => setFormData({...formData, state: e.target.value})}
+                    className="bg-white border-gray-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
+                  />
+                  <input 
+                    placeholder="City Override (Leave empty for State/Default)"
+                    value={formData.city || ''}
+                    onChange={(e) => setFormData({...formData, city: e.target.value})}
+                    className="bg-white border-gray-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Base Fare</label>
                   <input 
@@ -518,43 +305,74 @@ const Pricing = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Per KM Rate</label>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Included KM</label>
                   <input 
-                    type="number" value={formData.perKmRate}
-                    onChange={(e) => setFormData({...formData, perKmRate: e.target.value})}
+                    type="number" value={formData.includedKm}
+                    onChange={(e) => setFormData({...formData, includedKm: e.target.value})}
                     className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
                   />
                 </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Extra KM Rate</label>
+                  <input 
+                    type="number" value={formData.extraKmRate}
+                    onChange={(e) => setFormData({...formData, extraKmRate: e.target.value})}
+                    className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Per Day Fare</label>
+                  <input 
+                    type="number" value={formData.perDayFare}
+                    onChange={(e) => setFormData({...formData, perDayFare: e.target.value})}
+                    className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Pickup Time</label>
+                  <input 
+                    type="text" value={formData.pickupTime}
+                    onChange={(e) => setFormData({...formData, pickupTime: e.target.value})}
+                    className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Return Time Limit</label>
+                  <input 
+                    type="text" value={formData.returnTimeLimit}
+                    onChange={(e) => setFormData({...formData, returnTimeLimit: e.target.value})}
+                    className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Night Charge</label>
+                  <input 
+                    type="number" value={formData.nightCharge}
+                    onChange={(e) => setFormData({...formData, nightCharge: e.target.value})}
+                    className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1">Status</label>
+                  <select 
+                    value={formData.status}
+                    onChange={(e) => setFormData({...formData, status: e.target.value})}
+                    className="w-full bg-gray-50 border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
               </div>
 
-              {formData.rideType === 'Roundtrip' && (
-                <div className="grid grid-cols-3 gap-4 p-4 bg-purple-50/30 rounded-2xl border border-purple-50">
-                  <div>
-                    <label className="block text-[10px] font-black text-purple-400 uppercase mb-1">Min KM/Day</label>
-                    <input 
-                      type="number" value={formData.minKmsPerDay}
-                      onChange={(e) => setFormData({...formData, minKmsPerDay: e.target.value})}
-                      className="w-full bg-white border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black text-purple-400 uppercase mb-1">Driver Daily</label>
-                    <input 
-                      type="number" value={formData.driverAllowance}
-                      onChange={(e) => setFormData({...formData, driverAllowance: e.target.value})}
-                      className="w-full bg-white border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black text-purple-400 uppercase mb-1">Night Allw.</label>
-                    <input 
-                      type="number" value={formData.nightAllowance}
-                      onChange={(e) => setFormData({...formData, nightAllowance: e.target.value})}
-                      className="w-full bg-white border-gray-100 rounded-xl px-4 py-2.5 font-bold text-sm outline-none"
-                    />
-                  </div>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <input 
+                  type="checkbox" 
+                  checked={formData.taxesIncluded}
+                  onChange={(e) => setFormData({...formData, taxesIncluded: e.target.checked})}
+                />
+                <label className="text-sm font-bold text-gray-700">Taxes Included (Toll/Parking/State Tax)</label>
+              </div>
 
               <div className="p-6 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-4 -mx-8 -mb-8">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 text-sm font-bold text-gray-500 hover:text-gray-900 transition-all">Cancel</button>

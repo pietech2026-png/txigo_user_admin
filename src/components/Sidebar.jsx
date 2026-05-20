@@ -32,7 +32,7 @@ const Sidebar = () => {
           <Car className="text-white" size={24} />
         </div>
         <span className="text-2xl font-bold tracking-tight text-gray-900">
-          Txigo<span className="text-primary-600">Admin</span>
+          Motu Cabs<span className="text-primary-600">Admin</span>
         </span>
       </div>
 

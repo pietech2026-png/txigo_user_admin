@@ -104,7 +104,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">System Overview</h1>
-          <p className="text-gray-500 font-medium mt-1">Monitor Txigo's performance and operations.</p>
+          <p className="text-gray-500 font-medium mt-1">Monitor Motu Cabs's performance and operations.</p>
         </div>
         <div className="flex gap-3">
           <button className="px-4 py-2 text-sm font-bold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
