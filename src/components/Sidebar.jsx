@@ -28,11 +28,11 @@ const Sidebar = () => {
   return (
     <div className="w-72 h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0">
       <div className="p-8 flex items-center gap-3">
-        <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200">
-          <Car className="text-white" size={24} />
+        <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-200 text-white font-extrabold text-lg tracking-tight">
+          TX
         </div>
         <span className="text-2xl font-bold tracking-tight text-gray-900">
-          Motu Cabs<span className="text-primary-600">Admin</span>
+          Txigo <span className="text-primary-600">Admin</span>
         </span>
       </div>
 
